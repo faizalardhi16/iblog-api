@@ -1,4 +1,4 @@
-FROM node-20 as build-stage
+FROM node:20 as build-stage
 
 WORKDIR /app
 
@@ -6,10 +6,8 @@ COPY package*.json .
 
 RUN npm install
 
-RUN tsc build
-
-FROM node-20 as production-stage
+COPY . .
 
 EXPOSE 3030
 
-CMD ["node", "src/index.js"]
+CMD ["npm", "run", "start"]

@@ -1,5 +1,7 @@
 export type IResponse<T> = {
     status: number;
     message: string;
-    data: T
+    data: Data<T>
 }
+
+type Data<T> = T | null

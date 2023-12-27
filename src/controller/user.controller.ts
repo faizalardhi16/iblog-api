@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import UserService from "../service/user.service";
 import { PrismaClient } from "@prisma/client";
+import { CreateUserValidator } from "../validator/user.validator";
 
 
 const prisma: PrismaClient = new PrismaClient();
@@ -9,12 +10,21 @@ const user = new UserService(prisma);
 const router: Router = express.Router();
 
 
-router.post("/create-user", async (req,res) => {
+router.post("/create-user", CreateUserValidator, async (req,res) => {
     try {
         const result = await user.makeUser(req.body);
-        res.status(200).json(result)
+        res.status(result.status).json(result)
     } catch (error: any) {
-        res.status(error.response.status).json(error.response)
+        res.status(500).json()
+    }
+})
+
+router.patch("/update-user", async (req,res) => {
+    try {
+        const result = await user.editUser(req.body)
+        res.status(result.status).json(result)
+    } catch (error) {
+        res.status(500).json()
     }
 })
 

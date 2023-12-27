@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, Profile, User } from "@prisma/client";
 import {  ProfileInterface, UserInterface } from "../interfaces/user.interface";
 import Logger from "../utils/logger";
 import { IResponse } from "../interfaces/response.interface";
@@ -26,11 +26,15 @@ export default class UserRepository{
             }
         } catch (error: any) {
             this.logger.error(`${error.message} => ${item}`);
-            throw Error();
+            return{
+                status: 500,
+                message: error.message,
+                data: null
+            }
         }
     }
 
-    public async createProfile(item: ProfileInterface){
+    public async createProfile(item: ProfileInterface): Promise<IResponse<Partial<Profile>>>{
         try {
             const resp = await this.prismaService.profile.create({
                 data: item,
@@ -44,7 +48,64 @@ export default class UserRepository{
             }
         } catch (error: any) {
             this.logger.error(`${error.message} => ${item}`);
-            throw Error();
+            const modArr: Array<string> = error.message.split('\n')
+            return{
+                status: 500,
+                message: modArr[modArr.length-1],
+                data: null
+            }
+        }
+    }
+
+    public async userUpdate(item: UserInterface): Promise<IResponse<Partial<User>>>{
+        try {
+            const resp = await this.prismaService.user.update({
+                where: {
+                    user_id: item.user_id
+                },
+                data: item,
+                select: selectQuery(["email","username","avatar"])
+            })
+
+            return{
+                status: 200,
+                message: 'Success to update data',
+                data: resp
+            }
+        } catch (error: any) {
+            this.logger.error(error.message)
+            return{
+                status: 500,
+                message: error.message,
+                data: null
+            }
+        }
+    }
+
+    public async profileUpdate(item: ProfileInterface): Promise<IResponse<Partial<Profile>>>{
+        try {
+            const resp = await this.prismaService.profile.update({
+                where:{
+                    id: item.id
+                },
+                data: item,
+                select: selectQuery(["experience", "hobby", "birth"])
+            })
+
+            return{
+                status: 200,
+                message: 'Success to update data',
+                data: resp
+            }
+        } catch (error: any) {
+            this.logger.error(error.message);
+            const modArr: Array<string> = error.message.split('\n')
+            
+            return{
+                status: 500,
+                message: modArr[modArr.length-1],
+                data: null
+            }
         }
     }
 

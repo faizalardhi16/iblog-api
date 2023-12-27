@@ -11,6 +11,7 @@ export type CreateUserDto = {
 }
 
 export type UserInterface = {
+    user_id?: number
     username: string
     email: string
     password: string
@@ -18,6 +19,7 @@ export type UserInterface = {
 }
 
 export type ProfileInterface = {
+    id?:number;
     user_id: number; 
     experience: string;
     hobby: string[];
@@ -27,4 +29,17 @@ export type ProfileInterface = {
 export type CreateUserRepo = {
     user: UserInterface,
     profile: ProfileInterface
+}
+
+export type UpdateUserDto = {
+    profile_id: number;
+    user_id: number;
+    username: string;
+    email: string;
+    password: string;
+    confirm_password: string;
+    avatar?: string;
+    experience: string;
+    hobby: string[];
+    birth: string;
 }
